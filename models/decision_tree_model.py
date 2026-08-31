@@ -123,11 +123,17 @@ class DecisionTreeManager:
         recurse(0, [])
         return rules
 
-    def plot_tree_diagram(self, figsize=(14, 7)):
+    def plot_tree_diagram(self, figsize=(14, 7), palette: dict = None):
         if not self.is_trained:
             raise ValueError("Decision Tree model has not been trained.")
 
-        fig, ax = plt.subplots(figsize=figsize, dpi=120)
+        is_dark = palette.get("is_dark", False) if palette else False
+        face_color = "#131b2e" if is_dark else "#ffffff"
+        title_color = "#f8fafc" if is_dark else "#090d16"
+
+        fig, ax = plt.subplots(figsize=figsize, dpi=120, facecolor=face_color)
+        ax.set_facecolor(face_color)
+
         plot_tree(
             self.model,
             feature_names=self.feature_names,
@@ -138,6 +144,9 @@ class DecisionTreeManager:
             ax=ax,
             proportion=True
         )
-        ax.set_title(f"Sơ đồ Phân Nhánh Cây Quyết Định (Decision Tree - Max Depth: {self.max_depth})", fontsize=12, fontweight="bold", pad=15)
+        ax.set_title(
+            f"Sơ đồ Phân Nhánh Cây Quyết Định (Decision Tree - Max Depth: {self.max_depth})",
+            fontsize=12, fontweight="bold", pad=15, color=title_color
+        )
         plt.tight_layout()
         return fig

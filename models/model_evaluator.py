@@ -26,7 +26,6 @@ class ModelEvaluator:
         self.y_test = None
 
     def fit_and_evaluate(self, X: pd.DataFrame, y: pd.Series):
-        # Stratified train/test split to preserve class distribution
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             X, y, test_size=self.test_size, random_state=self.random_state, stratify=y
         )
@@ -39,33 +38,54 @@ class ModelEvaluator:
 
         self.metrics_summary = pd.DataFrame([
             {
-                "Thuật toán": "Cây Quyết Định (Decision Tree)",
+                "Thuật toán": "Decision Tree",
                 "Độ chính xác (Accuracy)": f"{self.dt_eval['accuracy'] * 100:.2f}%",
                 "Độ chuẩn xác (Precision)": f"{self.dt_eval['precision'] * 100:.2f}%",
                 "Độ bao phủ (Recall)": f"{self.dt_eval['recall'] * 100:.2f}%",
                 "Điểm F1 (F1-Score)": f"{self.dt_eval['f1'] * 100:.2f}%",
                 "Chỉ số ROC-AUC": f"{self.dt_eval['roc_auc']:.4f}",
-                "Ưu điểm nổi bật": "Diễn giải trực quan 100%, xuất luật If-Else rõ ràng",
+                "Đặc tính": "Mô hình quy tắc trực giao, diễn giải tường minh",
             },
             {
-                "Thuật toán": "Rừng Ngẫu Nhiên (Random Forest)",
+                "Thuật toán": "Random Forest",
                 "Độ chính xác (Accuracy)": f"{self.rf_eval['accuracy'] * 100:.2f}%",
                 "Độ chuẩn xác (Precision)": f"{self.rf_eval['precision'] * 100:.2f}%",
                 "Độ bao phủ (Recall)": f"{self.rf_eval['recall'] * 100:.2f}%",
                 "Điểm F1 (F1-Score)": f"{self.rf_eval['f1'] * 100:.2f}%",
                 "Chỉ số ROC-AUC": f"{self.rf_eval['roc_auc']:.4f}",
-                "Ưu điểm nổi bật": "Độ chính xác cao, bền vững với nhiễu, khử quá khớp",
+                "Đặc tính": "Mô hình tổ hợp bagging, giảm phương sai, chống nhiễu",
             }
         ])
         return self
 
-    def plot_confusion_matrices_plotly(self):
+    def plot_confusion_matrices_plotly(self, palette: dict = None):
         if self.dt_eval is None or self.rf_eval is None:
             raise ValueError("Models must be evaluated before plotting confusion matrices.")
+
+        paper_bg = palette["chart_paper"] if palette else "#ffffff"
+        plot_bg = palette["chart_plot"] if palette else "#ffffff"
+        text_color = palette["chart_text"] if palette else "#090d16"
+        grid_color = palette["chart_grid"] if palette else "#e2e8f0"
+        is_dark = palette.get("is_dark", False) if palette else False
 
         cm_dt = self.dt_eval["confusion_matrix"]
         cm_rf = self.rf_eval["confusion_matrix"]
         labels = ["Không cháy (0)", "Cháy (1)"]
+
+        if is_dark:
+            neutral_scale = [
+                [0.0, "#131b2e"],
+                [0.35, "#1e293b"],
+                [0.7, "#334155"],
+                [1.0, "#38bdf8"]
+            ]
+        else:
+            neutral_scale = [
+                [0.0, "#f8fafc"],
+                [0.35, "#cbd5e1"],
+                [0.7, "#64748b"],
+                [1.0, "#090d16"]
+            ]
 
         fig = make_subplots(
             rows=1, cols=2,
@@ -79,8 +99,8 @@ class ModelEvaluator:
         fig.add_trace(
             go.Heatmap(
                 z=cm_dt, x=labels, y=labels,
-                colorscale="Blues", text=cm_dt,
-                texttemplate="%{text}", textfont={"size": 16},
+                colorscale=neutral_scale, text=cm_dt,
+                texttemplate="%{text}", textfont={"size": 15, "family": "Consolas, monospace", "color": text_color},
                 showscale=False
             ),
             row=1, col=1
@@ -89,58 +109,75 @@ class ModelEvaluator:
         fig.add_trace(
             go.Heatmap(
                 z=cm_rf, x=labels, y=labels,
-                colorscale="Greens", text=cm_rf,
-                texttemplate="%{text}", textfont={"size": 16},
+                colorscale=neutral_scale, text=cm_rf,
+                texttemplate="%{text}", textfont={"size": 15, "family": "Consolas, monospace", "color": text_color},
                 showscale=False
             ),
             row=1, col=2
         )
 
-        fig.update_xaxes(title_text="Dự đoán của mô hình", row=1, col=1)
-        fig.update_xaxes(title_text="Dự đoán của mô hình", row=1, col=2)
-        fig.update_yaxes(title_text="Thực tế kiểm sát", row=1, col=1)
-        fig.update_yaxes(title_text="Thực tế kiểm sát", row=1, col=2)
+        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
+        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
+        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
+        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
 
         fig.update_layout(
-            title="Đối Chiếu Ma Trận Nhầm Lẫn (Confusion Matrix)",
-            height=400,
-            margin=dict(l=40, r=40, t=60, b=40)
+            title={"text": "Ma Trận Nhầm Lẫn (Confusion Matrix)", "font": {"size": 14, "color": text_color}},
+            height=360,
+            paper_bgcolor=paper_bg,
+            plot_bgcolor=plot_bg,
+            font={"family": "Segoe UI, Arial, sans-serif", "color": text_color, "size": 12},
+            margin=dict(l=30, r=30, t=50, b=30)
         )
         return fig
 
-    def plot_roc_curves_plotly(self):
+    def plot_roc_curves_plotly(self, palette: dict = None):
         if self.dt_eval is None or self.rf_eval is None:
             raise ValueError("Models must be evaluated before plotting ROC curves.")
+
+        paper_bg = palette["chart_paper"] if palette else "#ffffff"
+        plot_bg = palette["chart_plot"] if palette else "#ffffff"
+        text_color = palette["chart_text"] if palette else "#090d16"
+        grid_color = palette["chart_grid"] if palette else "#e2e8f0"
+        is_dark = palette.get("is_dark", False) if palette else False
 
         y_true = self.y_test.values
         fpr_dt, tpr_dt, _ = roc_curve(y_true, self.dt_eval["y_prob"])
         fpr_rf, tpr_rf, _ = roc_curve(y_true, self.rf_eval["y_prob"])
 
+        rf_color = "#38bdf8" if is_dark else "#090d16"
+        dt_color = "#94a3b8" if is_dark else "#475569"
+        base_color = "#475569" if is_dark else "#cbd5e1"
+        legend_bg = "rgba(19, 27, 46, 0.9)" if is_dark else "rgba(255,255,255,0.9)"
+
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=fpr_dt, y=tpr_dt, mode="lines+markers",
-            name=f"Decision Tree (AUC = {self.dt_eval['roc_auc']:.3f})",
-            line=dict(color="#3b82f6", width=2.5)
+            x=fpr_dt, y=tpr_dt, mode="lines",
+            name=f"Decision Tree (AUC: {self.dt_eval['roc_auc']:.3f})",
+            line=dict(color=dt_color, width=2)
         ))
         fig.add_trace(go.Scatter(
-            x=fpr_rf, y=tpr_rf, mode="lines+markers",
-            name=f"Random Forest (AUC = {self.rf_eval['roc_auc']:.3f})",
-            line=dict(color="#10b981", width=3)
+            x=fpr_rf, y=tpr_rf, mode="lines",
+            name=f"Random Forest (AUC: {self.rf_eval['roc_auc']:.3f})",
+            line=dict(color=rf_color, width=2.5)
         ))
         fig.add_trace(go.Scatter(
             x=[0, 1], y=[0, 1], mode="lines",
-            name="Baseline (AUC = 0.5)",
-            line=dict(color="#9ca3af", dash="dash")
+            name="Baseline ngẫu nhiên (0.50)",
+            line=dict(color=base_color, width=1.5, dash="dash")
         ))
 
         fig.update_layout(
-            title="Đường Cong ROC (Receiver Operating Characteristic)",
-            xaxis_title="Tỷ lệ Dương tính Giả (False Positive Rate)",
-            yaxis_title="Tỷ lệ Dương tính Thật (True Positive Rate / Recall)",
-            height=430,
+            title={"text": "Đường Cong ROC (Receiver Operating Characteristic)", "font": {"size": 14, "color": text_color}},
+            xaxis=dict(title=dict(text="False Positive Rate", font=dict(color=text_color)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color)),
+            yaxis=dict(title=dict(text="True Positive Rate", font=dict(color=text_color)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color)),
+            height=360,
+            paper_bgcolor=paper_bg,
+            plot_bgcolor=plot_bg,
+            font={"family": "Segoe UI, Arial, sans-serif", "color": text_color, "size": 12},
             hovermode="x unified",
-            legend=dict(yanchor="bottom", y=0.05, xanchor="right", x=0.98),
-            margin=dict(l=40, r=40, t=60, b=40)
+            legend=dict(yanchor="bottom", y=0.06, xanchor="right", x=0.96, bgcolor=legend_bg, font=dict(color=text_color)),
+            margin=dict(l=30, r=30, t=50, b=30)
         )
         return fig
 

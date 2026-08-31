@@ -7,23 +7,34 @@ from plotly.subplots import make_subplots
 from config import CLIMATE_PRESETS, ALL_MODEL_FEATURES
 
 
-def render_climate_view(df: pd.DataFrame, dt_model, rf_model):
-    st.markdown("### 🧪 Mô Phỏng Kịch Bản Khí Hậu & Phân Tích Độ Nhạy Rủi Ro (What-If Analysis)")
-    st.caption("Giả lập tác động của các biến động khí hậu cực đoan đến khả năng bùng phát cháy rừng và so sánh cách 2 thuật toán phản ứng.")
+def render_climate_view(df: pd.DataFrame, dt_model, rf_model, palette: dict):
+    text_pri = palette["text_primary"]
+    text_sec = palette["text_secondary"]
+    border_col = palette["border"]
+    card_bg = palette["bg_card"]
+    paper_bg = palette["chart_paper"]
+    plot_bg = palette["chart_plot"]
+    grid_col = palette["chart_grid"]
+    is_dark = palette["is_dark"]
 
-    st.subheader("1. Chọn Kịch Bản Khí Hậu Mẫu")
+    st.markdown(f"<h4 style='color:{text_pri}; margin:0;'>MÔ PHỎNG KỊCH BẢN KHÍ HẬU & ĐỘ NHẠY RỦI RO</h4>", unsafe_allow_html=True)
+    st.caption("Khảo nghiệm phản ứng của mô hình trước các biến thiên khí hậu cực đoan và định vị ranh giới chuyển pha bắt lửa.")
+
+    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Kịch Bản Giả Lập Mẫu</div>", unsafe_allow_html=True)
     preset_key = st.radio(
-        "Lựa chọn kịch bản giả lập:",
+        "Kịch bản:",
         options=list(CLIMATE_PRESETS.keys()),
         format_func=lambda k: f"{CLIMATE_PRESETS[k]['title']} — {CLIMATE_PRESETS[k]['desc']}",
-        horizontal=False
+        horizontal=False,
+        label_visibility="collapsed"
     )
     preset = CLIMATE_PRESETS[preset_key]
     delta = preset["delta"]
 
     base_values = df[ALL_MODEL_FEATURES].median().to_dict()
 
-    st.markdown("##### 🎛️ Tinh Chỉnh Biến Số Khí Hậu Giả Lập")
+    st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Điều Chỉnh Tham Số Biến Đổi</div>", unsafe_allow_html=True)
     col_t, col_rh, col_ws, col_rain = st.columns(4)
 
     with col_t:
@@ -81,85 +92,126 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model):
 
     col_res1, col_res2 = st.columns(2)
     with col_res1:
-        st.metric(label="Xác suất cháy - Decision Tree", value=f"{prob_dt:.1f}%", delta=f"{prob_dt - 50:.1f}% so với ngưỡng cắt 50%")
+        st.markdown(f"""
+        <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 12px 16px; background: {card_bg};">
+            <div style="font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Decision Tree)</div>
+            <div style="font-size: 24px; font-family: Consolas, monospace; font-weight: 700; color: {text_pri}; margin-top: 2px;">{prob_dt:.1f}%</div>
+        </div>
+        """, unsafe_allow_html=True)
     with col_res2:
-        st.metric(label="Xác suất cháy - Random Forest", value=f"{prob_rf:.1f}%", delta=f"{prob_rf - 50:.1f}% so với ngưỡng cắt 50%")
+        st.markdown(f"""
+        <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 12px 16px; background: {card_bg};">
+            <div style="font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Random Forest)</div>
+            <div style="font-size: 24px; font-family: Consolas, monospace; font-weight: 700; color: {text_pri}; margin-top: 2px;">{prob_rf:.1f}%</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.subheader("2. Đường Cong Phản Ứng Độ Nhạy (Temperature Sensitivity Curve)")
-    st.caption("Khảo sát sự thay đổi xác suất rủi ro khi nhiệt độ tăng liên tục từ 20°C đến 45°C (giữ nguyên độ ẩm và các yếu tố khác).")
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Đường Cong Phản Ứng Độ Nhạy Nhiệt Độ (20°C Đến 45°C)</div>", unsafe_allow_html=True)
 
-    temp_range = np.linspace(20, 45, 50)
-    curve_dt = []
-    curve_rf = []
-
+    temp_range = np.linspace(20, 45, 40)
+    curve_samples = []
     for t in temp_range:
-        temp_sim = sim_row.copy()
-        temp_sim["Temperature"] = t
-        temp_sim["FFMC"] = np.clip(base_values["FFMC"] + (t - 30) * 1.5 - (sim_rh - 60) * 0.4, 30.0, 96.0)
-        temp_sim["ISI"] = np.clip(base_values["ISI"] + (sim_ws - 15) * 0.3 + (t - 30) * 0.3, 0.0, 19.0)
-        curve_dt.append(dt_model.predict_proba(temp_sim)[0][1] * 100)
-        curve_rf.append(rf_model.predict_proba(temp_sim)[0][1] * 100)
+        s = sim_row.iloc[0].to_dict()
+        s["Temperature"] = t
+        s["FFMC"] = np.clip(base_values["FFMC"] + (t - 30) * 1.5 - (sim_rh - 60) * 0.4, 30.0, 96.0)
+        s["ISI"] = np.clip(base_values["ISI"] + (sim_ws - 15) * 0.3 + (t - 30) * 0.3, 0.0, 19.0)
+        curve_samples.append(s)
+
+    curve_df = pd.DataFrame(curve_samples)[ALL_MODEL_FEATURES]
+    curve_dt = dt_model.predict_proba(curve_df)[:, 1] * 100
+    curve_rf = rf_model.predict_proba(curve_df)[:, 1] * 100
+
+    rf_line_color = "#38bdf8" if is_dark else "#090d16"
+    dt_line_color = "#94a3b8" if is_dark else "#475569"
+    vline_color = "#38bdf8" if is_dark else "#090d16"
 
     fig_curve = go.Figure()
     fig_curve.add_trace(go.Scatter(
         x=temp_range, y=curve_dt,
         mode="lines",
-        name="Decision Tree (Phản ứng dạng bậc thang / Ngưỡng cứng)",
-        line=dict(color="#3b82f6", width=2.5, dash="dash")
+        name="Decision Tree (Trực giao)",
+        line=dict(color=dt_line_color, width=2, dash="dash")
     ))
     fig_curve.add_trace(go.Scatter(
         x=temp_range, y=curve_rf,
         mode="lines",
-        name="Random Forest (Phản ứng mượt mà / Sigmoid mờ)",
-        line=dict(color="#ef4444", width=3.5)
+        name="Random Forest (Mượt mà)",
+        line=dict(color=rf_line_color, width=2.5)
     ))
-    fig_curve.add_hline(y=50, line_dash="dot", line_color="gray", annotation_text="Ngưỡng kích hoạt Cháy (50%)")
-    fig_curve.add_vline(x=sim_temp, line_dash="longdash", line_color="#10b981", annotation_text=f"Nhiệt độ hiện tại ({sim_temp}°C)")
+    fig_curve.add_hline(y=50, line_dash="dot", line_color=grid_col, annotation_text="Ngưỡng 50%", annotation_font_size=11, annotation_font_color=text_sec)
+    fig_curve.add_vline(x=sim_temp, line_dash="solid", line_color=vline_color, line_width=1, annotation_text=f"{sim_temp}°C", annotation_font_size=11, annotation_font_color=text_pri)
 
     fig_curve.update_layout(
-        xaxis_title="Nhiệt độ (°C)",
-        yaxis_title="Xác suất bùng phát Cháy (%)",
-        height=380,
+        xaxis=dict(title=dict(text="Nhiệt độ (°C)", font=dict(color=text_pri, size=12)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec)),
+        yaxis=dict(title=dict(text="Xác suất cháy (%)", font=dict(color=text_pri, size=12)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec)),
+        height=320,
+        paper_bgcolor=paper_bg,
+        plot_bgcolor=plot_bg,
+        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
         hovermode="x unified",
-        legend=dict(yanchor="top", y=0.98, xanchor="left", x=0.02)
+        legend=dict(yanchor="top", y=0.96, xanchor="left", x=0.03, bgcolor=card_bg, bordercolor=border_col, borderwidth=1, font=dict(color=text_pri)),
+        margin=dict(l=30, r=30, t=20, b=30)
     )
     st.plotly_chart(fig_curve, use_container_width=True)
 
-    st.markdown("---")
-    st.subheader("3. Ma Trận Ranh Giới Chuyển Pha Bắt Lửa 2D (Tipping Point Heatmap)")
-    st.caption("Bản đồ ranh giới rủi ro tương tác giữa Nhiệt độ (°C) và Độ ẩm không khí (%):")
+    st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Ma Trận Ranh Giới Chuyển Pha Bắt Lửa (Nhiệt Độ x Độ Ẩm)</div>", unsafe_allow_html=True)
 
+    # Vectorized fast 2D grid generation
     grid_t = np.linspace(22, 42, 20)
     grid_rh = np.linspace(25, 90, 20)
     T_grid, RH_grid = np.meshgrid(grid_t, grid_rh)
 
-    Z_dt = np.zeros(T_grid.shape)
-    Z_rf = np.zeros(T_grid.shape)
-
+    batch_samples = []
     for i in range(T_grid.shape[0]):
         for j in range(T_grid.shape[1]):
             t_val = T_grid[i, j]
             rh_val = RH_grid[i, j]
-            sample = sim_row.copy()
-            sample["Temperature"] = t_val
-            sample["RH"] = rh_val
-            sample["FFMC"] = np.clip(base_values["FFMC"] + (t_val - 30) * 1.5 - (rh_val - 60) * 0.4, 30.0, 96.0)
-            sample["ISI"] = np.clip(base_values["ISI"] + (sim_ws - 15) * 0.3 + (t_val - 30) * 0.3, 0.0, 19.0)
-            Z_dt[i, j] = dt_model.predict_proba(sample)[0][1] * 100
-            Z_rf[i, j] = rf_model.predict_proba(sample)[0][1] * 100
+            batch_samples.append({
+                "Temperature": t_val,
+                "RH": rh_val,
+                "Ws": sim_ws,
+                "Rain": sim_rain,
+                "FFMC": np.clip(base_values["FFMC"] + (t_val - 30) * 1.5 - (rh_val - 60) * 0.4, 30.0, 96.0),
+                "DMC": sim_dmc,
+                "DC": sim_dc,
+                "ISI": np.clip(base_values["ISI"] + (sim_ws - 15) * 0.3 + (t_val - 30) * 0.3, 0.0, 19.0),
+                "BUI": sim_bui,
+                "FWI": sim_fwi
+            })
+
+    batch_df = pd.DataFrame(batch_samples)[ALL_MODEL_FEATURES]
+    Z_dt = dt_model.predict_proba(batch_df)[:, 1].reshape(T_grid.shape) * 100
+    Z_rf = rf_model.predict_proba(batch_df)[:, 1].reshape(T_grid.shape) * 100
+
+    if is_dark:
+        contour_scale = [
+            [0.0, "#131b2e"],
+            [0.25, "#1e293b"],
+            [0.50, "#334155"],
+            [0.75, "#b4431a"],
+            [1.00, "#ef4444"]
+        ]
+    else:
+        contour_scale = [
+            [0.0, "#f8fafc"],
+            [0.25, "#e2e8f0"],
+            [0.50, "#cbd5e1"],
+            [0.75, "#b4431a"],
+            [1.00, "#991b1b"]
+        ]
 
     fig_contour = make_subplots(
         rows=1, cols=2,
-        subplot_titles=("Decision Tree (Phân định ranh giới trực giao cứng)", "Random Forest (Biên độ chuyển tiếp liên tục)")
+        subplot_titles=("Decision Tree (Phân định vuông góc)", "Random Forest (Biên độ chuyển tiếp mềm)")
     )
 
     fig_contour.add_trace(
         go.Contour(
             z=Z_dt, x=grid_t, y=grid_rh,
-            colorscale="YlOrRd",
-            contours=dict(coloring="heatmap", showlabels=True),
-            colorbar=dict(title="Rủi ro (%)", len=0.8),
+            colorscale=contour_scale,
+            contours=dict(coloring="heatmap", showlabels=True, labelfont=dict(size=10, color=text_pri, family="Consolas, monospace")),
             showscale=False
         ),
         row=1, col=1
@@ -168,20 +220,30 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model):
     fig_contour.add_trace(
         go.Contour(
             z=Z_rf, x=grid_t, y=grid_rh,
-            colorscale="YlOrRd",
-            contours=dict(coloring="heatmap", showlabels=True),
-            colorbar=dict(title="Rủi ro (%)", len=0.8),
+            colorscale=contour_scale,
+            contours=dict(coloring="heatmap", showlabels=True, labelfont=dict(size=10, color=text_pri, family="Consolas, monospace")),
+            colorbar=dict(title=dict(text="Rủi ro (%)", font=dict(size=11, color=text_pri)), len=0.85, thickness=12, tickfont=dict(color=text_sec)),
             showscale=True
         ),
         row=1, col=2
     )
 
-    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=1)
-    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=2)
-    fig_contour.update_yaxes(title_text="Độ ẩm tương đối (%)", row=1, col=1)
-    fig_contour.update_yaxes(title_text="Độ ẩm tương đối (%)", row=1, col=2)
+    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
+    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
+    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
+    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
 
-    fig_contour.update_layout(height=450, margin=dict(l=40, r=40, t=50, b=40))
+    fig_contour.update_layout(
+        height=380,
+        paper_bgcolor=paper_bg,
+        plot_bgcolor=plot_bg,
+        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
+        margin=dict(l=30, r=30, t=40, b=30)
+    )
     st.plotly_chart(fig_contour, use_container_width=True)
 
-    st.info("💡 **Ghi chú phân tích thuật toán**: Decision Tree tạo ra các phân vùng vuông góc (axis-aligned orthogonal splits) dẫn đến hiện tượng 'nhảy bước' khi một thông số vượt qua ngưỡng rẽ nhánh. Ngược lại, Random Forest tổng hợp từ 100 cây con nên tạo ra bề mặt ranh giới mềm mại, phản ánh sát hơn tính chất vật lý của tự nhiên.")
+    st.markdown(f"""
+    <div style="border-left: 3px solid {border_col}; padding-left: 12px; font-size: 13px; color: {text_sec}; font-weight: 500; margin-top: 6px;">
+        ĐẶC TÍNH MÔ HÌNH: Decision Tree áp dụng các lát cắt trực giao (axis-aligned orthogonal partitions), dẫn đến bước nhảy tức thời tại các điểm chia nhánh. Random Forest tổng hợp từ nhiều cây con với các tập thuộc tính con khác nhau, tạo bề mặt xác suất mượt mà và phân định ranh giới gần với quy luật tự nhiên.
+    </div>
+    """, unsafe_allow_html=True)

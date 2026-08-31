@@ -29,58 +29,58 @@ FEATURE_RANGES = {
     "FWI": {"min": 0.0, "max": 35.0, "default": 6.0, "step": 0.1, "unit": ""},
 }
 
+# Refined muted status colors
 RISK_LEVELS = [
     {
-        "name": "Cấp 1 - Thấp (An toàn)",
+        "name": "Cấp 1 - Thấp",
         "min_score": 0.0,
         "max_score": 0.25,
-        "color": "#10b981",
+        "color": "#2e6f40",
         "badge": "AN TOÀN",
-        "description": "Thực bì ẩm, ít khả năng phát sinh đám cháy. Hoạt động sinh hoạt bình thường.",
+        "description": "Thực bì ẩm, ít khả năng phát sinh đám cháy. Hoạt động kiểm lâm duy trì thường xuyên.",
         "actions": [
-            "Duy trì chế độ tuần tra thông thường.",
-            "Tuyên truyền bảo vệ rừng định kỳ cho người dân.",
-            "Kiểm tra trang thiết bị phòng chữa cháy."
+            "Duy trì chế độ tuần tra bảo vệ rừng theo định kỳ.",
+            "Tuyên truyền bảo vệ rừng cho dân cư vùng giáp ranh.",
+            "Kiểm tra định kỳ trang thiết bị và bể chứa nước."
         ]
     },
     {
-        "name": "Cấp 2 - Trung bình (Chú ý)",
+        "name": "Cấp 2 - Trung bình",
         "min_score": 0.25,
         "max_score": 0.50,
-        "color": "#f59e0b",
+        "color": "#9a6a12",
         "badge": "CHÚ Ý",
-        "description": "Thực bì bắt đầu khô kiệt, mồi lửa có thể bén nếu gặp gió mạnh.",
+        "description": "Thực bì bắt đầu khô kiệt. Nguy cơ bén lửa nếu gặp gió mạnh hoặc nguồn nhiệt bất cẩn.",
         "actions": [
-            "Tăng cường tuần tra tại các khu vực rừng thông, tràm dễ bắt lửa.",
-            "Khuyến cáo người dân không đốt nương rẫy, xử lý thực bì bừa bãi.",
-            "Kiểm tra các bể nước dự trữ và nguồn nước tự nhiên."
+            "Tăng tần suất tuần tra tại các khu vực thực bì dày, dễ bắt lửa.",
+            "Kiểm soát nghiêm ngặt các hoạt động đốt dọn thực bì, nương rẫy.",
+            "Kiểm tra sẵn sàng các nguồn nước và lối tiếp cận xe chữa cháy."
         ]
     },
     {
-        "name": "Cấp 3 - Nguy hiểm (Báo động)",
+        "name": "Cấp 3 - Nguy hiểm",
         "min_score": 0.50,
         "max_score": 0.75,
-        "color": "#f97316",
+        "color": "#b4431a",
         "badge": "NGUY HIỂM",
-        "description": "Nguy cơ bùng phát cháy cao. Lửa dễ bắt và lan truyền nhanh.",
+        "description": "Thời tiết khô nóng gay gắt. Đám cháy bùng phát nhanh và lan truyền diện rộng.",
         "actions": [
-            "Trực chiến 24/24h tại các trạm canh gác và chòi quan sát lửa rừng.",
-            "Nghiêm cấm hoàn toàn hành vi mang lửa, chất nổ vào rừng.",
-            "Sẵn sàng phương tiện cơ động và lực lượng phản ứng nhanh tại chỗ."
+            "Lực lượng kiểm lâm trực 24/24 tại chòi canh và trạm gác cửa rừng.",
+            "Nghiêm cấm người không có nhiệm vụ mang bật lửa, chất cháy vào rừng.",
+            "Chuẩn bị sẵn sàng phương tiện cơ động và lực lượng cơ động tại chỗ."
         ]
     },
     {
-        "name": "Cấp 4 - Cực kỳ nguy hiểm (Khẩn cấp)",
+        "name": "Cấp 4 - Cực kỳ nguy hiểm",
         "min_score": 0.75,
         "max_score": 1.00,
-        "color": "#ef4444",
+        "color": "#991b1b",
         "badge": "CỰC KỲ NGUY HIỂM",
-        "description": "Chỉ số khô hạn và lan truyền lửa ở mức cực đoan. Lửa bùng phát dữ dội.",
+        "description": "Hạn hán tích lũy ở mức báo động đỏ. Tốc độ lan tràn lửa cực lớn, nguy cơ thảm họa.",
         "actions": [
-            "Kích hoạt trạng thái khẩn cấp cấp tỉnh/vùng, huy động lực lượng liên ngành.",
-            "Bố trí xe cứu hỏa cơ động ứng trực tại cửa rừng trọng điểm.",
-            "Sơ tán người dân khỏi khu vực ranh giới rừng có nguy cơ cao.",
-            "Áp dụng flycam/drone trinh sát phát hiện sớm tàn lửa và khói."
+            "Ban bố tình trạng khẩn cấp, huy động hiệp đồng quân đội và công an.",
+            "Bố trí xe bồn và máy bơm dã chiến tại các trục đường ranh cản lửa.",
+            "Sơ tán người dân khỏi khu vực nguy cơ cao; sử dụng thiết bị bay quan trắc."
         ]
     }
 ]
@@ -93,17 +93,57 @@ CLIMATE_PRESETS = {
     },
     "heatwave": {
         "title": "Đợt Sóng Nhiệt Cực Đoan (El Niño)",
-        "desc": "Nhiệt độ tăng vọt +5°C, độ ẩm giảm mạnh -35%, gió nóng khô tăng +8 km/h.",
+        "desc": "Nhiệt độ tăng +5°C, độ ẩm giảm -35%, gió nóng khô tăng +8 km/h.",
         "delta": {"Temperature": 5.0, "RH": -35.0, "Ws": 8.0, "Rain": 0.0}
     },
     "climate_change_2050": {
         "title": "Kịch Bản Biến Đổi Khí Hậu 2050 (IPCC RCP 8.5)",
-        "desc": "Nhiệt độ nền tăng +3°C, độ ẩm giảm -15%, hạn hán kéo dài và gió tăng nhẹ.",
+        "desc": "Nhiệt độ nền tăng +3°C, độ ẩm giảm -15%, hạn hán kéo dài.",
         "delta": {"Temperature": 3.0, "RH": -15.0, "Ws": 4.0, "Rain": -1.0}
     },
     "flash_rain": {
-        "title": "Mưa Dông Bất Chợt Giải Nhiệt",
-        "desc": "Có mưa dông giải hạn 10mm, nhiệt độ giảm -4°C, độ ẩm không khí tăng vọt +40%.",
+        "title": "Mưa Dông Giải Nhiệt",
+        "desc": "Mưa 10mm, nhiệt độ giảm -4°C, độ ẩm không khí tăng +40%.",
         "delta": {"Temperature": -4.0, "RH": 40.0, "Ws": -3.0, "Rain": 10.0}
     }
 }
+
+
+def get_theme_palette(is_dark: bool = False) -> dict:
+    """Returns high-contrast color coordinates for Light or Dark theme mode."""
+    if is_dark:
+        return {
+            "is_dark": True,
+            "bg_app": "#0b0f19",
+            "bg_card": "#131b2e",
+            "bg_surface": "#1e293b",
+            "border": "#2d3748",
+            "border_accent": "#475569",
+            "text_primary": "#f8fafc",
+            "text_secondary": "#e2e8f0",
+            "text_muted": "#94a3b8",
+            "chart_paper": "#131b2e",
+            "chart_plot": "#131b2e",
+            "chart_grid": "#1e293b",
+            "chart_text": "#f8fafc",
+            "tag_bg": "#1e293b",
+            "accent_line": "#38bdf8",
+        }
+    else:
+        return {
+            "is_dark": False,
+            "bg_app": "#f8fafc",
+            "bg_card": "#ffffff",
+            "bg_surface": "#f1f5f9",
+            "border": "#cbd5e1",
+            "border_accent": "#94a3b8",
+            "text_primary": "#090d16",
+            "text_secondary": "#1e293b",
+            "text_muted": "#475569",
+            "chart_paper": "#ffffff",
+            "chart_plot": "#ffffff",
+            "chart_grid": "#e2e8f0",
+            "chart_text": "#090d16",
+            "tag_bg": "#f1f5f9",
+            "accent_line": "#090d16",
+        }
