@@ -116,17 +116,20 @@ class ModelEvaluator:
             row=1, col=2
         )
 
-        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
-        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
-        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
-        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color), tickfont=dict(color=text_color))
+        font_title = palette.get("font_title", "Montserrat, sans-serif") if palette else "Montserrat, sans-serif"
+        font_body = palette.get("font_body", "Lato, sans-serif") if palette else "Lato, sans-serif"
+
+        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color, family=font_title), tickfont=dict(color=text_color, family=font_body))
+        fig.update_xaxes(title_text="Giá trị dự đoán", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color, family=font_title), tickfont=dict(color=text_color, family=font_body))
+        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=1, gridcolor=grid_color, title_font=dict(color=text_color, family=font_title), tickfont=dict(color=text_color, family=font_body))
+        fig.update_yaxes(title_text="Giá trị thực tế", row=1, col=2, gridcolor=grid_color, title_font=dict(color=text_color, family=font_title), tickfont=dict(color=text_color, family=font_body))
 
         fig.update_layout(
-            title={"text": "Ma Trận Nhầm Lẫn (Confusion Matrix)", "font": {"size": 14, "color": text_color}},
+            title={"text": "Ma Trận Nhầm Lẫn (Confusion Matrix)", "font": {"size": 14, "color": text_color, "family": font_title}},
             height=360,
             paper_bgcolor=paper_bg,
             plot_bgcolor=plot_bg,
-            font={"family": "Segoe UI, Arial, sans-serif", "color": text_color, "size": 12},
+            font={"family": font_body, "color": text_color, "size": 12},
             margin=dict(l=30, r=30, t=50, b=30)
         )
         return fig
@@ -140,6 +143,8 @@ class ModelEvaluator:
         text_color = palette["chart_text"] if palette else "#090d16"
         grid_color = palette["chart_grid"] if palette else "#e2e8f0"
         is_dark = palette.get("is_dark", False) if palette else False
+        font_title = palette.get("font_title", "Montserrat, sans-serif") if palette else "Montserrat, sans-serif"
+        font_body = palette.get("font_body", "Lato, sans-serif") if palette else "Lato, sans-serif"
 
         y_true = self.y_test.values
         fpr_dt, tpr_dt, _ = roc_curve(y_true, self.dt_eval["y_prob"])
@@ -168,15 +173,15 @@ class ModelEvaluator:
         ))
 
         fig.update_layout(
-            title={"text": "Đường Cong ROC (Receiver Operating Characteristic)", "font": {"size": 14, "color": text_color}},
-            xaxis=dict(title=dict(text="False Positive Rate", font=dict(color=text_color)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color)),
-            yaxis=dict(title=dict(text="True Positive Rate", font=dict(color=text_color)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color)),
+            title={"text": "Đường Cong ROC (Receiver Operating Characteristic)", "font": {"size": 14, "color": text_color, "family": font_title}},
+            xaxis=dict(title=dict(text="False Positive Rate", font=dict(color=text_color, family=font_title)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color, family=font_body)),
+            yaxis=dict(title=dict(text="True Positive Rate", font=dict(color=text_color, family=font_title)), gridcolor=grid_color, zeroline=False, tickfont=dict(color=text_color, family=font_body)),
             height=360,
             paper_bgcolor=paper_bg,
             plot_bgcolor=plot_bg,
-            font={"family": "Segoe UI, Arial, sans-serif", "color": text_color, "size": 12},
+            font={"family": font_body, "color": text_color, "size": 12},
             hovermode="x unified",
-            legend=dict(yanchor="bottom", y=0.06, xanchor="right", x=0.96, bgcolor=legend_bg, font=dict(color=text_color)),
+            legend=dict(yanchor="bottom", y=0.06, xanchor="right", x=0.96, bgcolor=legend_bg, font=dict(color=text_color, family=font_body)),
             margin=dict(l=30, r=30, t=50, b=30)
         )
         return fig

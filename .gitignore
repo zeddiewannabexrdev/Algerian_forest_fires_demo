@@ -1,16 +1,35 @@
 # ==============================================================================
-# Git Ignore Configuration - Forest Fire Analytics Project
+# Git Ignore Configuration
+# Project: Forest Fire Risk Assessment & Predictive Analytics Workstation
 # ==============================================================================
 
-# --- Python Bytecode & Cache ---
+# ------------------------------------------------------------------------------
+# Python Bytecode & Compilation Cache
+# ------------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
+*.pyd
+*.dll
+
+# ------------------------------------------------------------------------------
+# Virtual Environments
+# ------------------------------------------------------------------------------
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------------------------
+# Build, Distribution & Packaging Artifacts
+# ------------------------------------------------------------------------------
 build/
-develop-eggs/
 dist/
+bin/
 downloads/
 eggs/
 .eggs/
@@ -26,63 +45,116 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# --- Virtual Environments ---
-venv/
-.venv/
-env/
-.env/
-ENV/
-env.bak/
-venv.bak/
+# PyInstaller temporary files (keep project spec file)
+*.manifest
+# Exempt customized project build spec
+!ForestFireWorkstation.spec
 
-# --- Jupyter Notebook & Scratch ---
-.ipynb_checkpoints/
-*-checkpoint.ipynb
+# Release packages and large binary archives
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.iso
 
-# --- Streamlit Cache & Local Configurations ---
+# ------------------------------------------------------------------------------
+# Streamlit & Local App Runtime Cache
+# ------------------------------------------------------------------------------
 .streamlit/secrets.toml
 .streamlit/credentials.toml
 .streamlit/cache/
 
-# --- Testing & Coverage ---
+# ------------------------------------------------------------------------------
+# Environment Variables & Sensitive Credentials
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# ------------------------------------------------------------------------------
+# Jupyter Notebook Checkpoints
+# ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# ------------------------------------------------------------------------------
+# Testing, Coverage & Code Quality Tools
+# ------------------------------------------------------------------------------
 .pytest_cache/
 .coverage
 .coverage.*
-nosetests.xml
+htmlcov/
 coverage.xml
+nosetests.xml
 *.cover
 *.py,cover
-htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
 
-# --- IDE & Editor Settings ---
+# ------------------------------------------------------------------------------
+# IDE & Code Editor Settings
+# ------------------------------------------------------------------------------
+# Visual Studio Code: ignore user-specific state, preserve team settings
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.code-workspace
+
+# JetBrains (PyCharm, IntelliJ, etc.)
 .idea/
+*.iws
+*.iml
+
+# Other editors
 *.sublime-project
 *.sublime-workspace
 *.swp
 *.swo
 *~
+.cursor/
 
-# --- Operating System Files ---
+# ------------------------------------------------------------------------------
+# Temporary Files, Logs & Process Dumps
+# ------------------------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+*.pid
+*.orig
+
+# ------------------------------------------------------------------------------
+# Operating System Generated Files
+# ------------------------------------------------------------------------------
 # Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-*.stackdump
 [Dd]esktop.ini
 $RECYCLE.BIN/
+*.stackdump
 
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
 ._*
+.Spotlight-V100
+.Trashes
 
-# --- Temporary Logs & Dumps ---
-*.log
-*.tmp
-*.bak
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*

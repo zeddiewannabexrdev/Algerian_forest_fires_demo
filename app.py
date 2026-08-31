@@ -5,7 +5,7 @@ import pandas as pd
 import config
 if not hasattr(config, "get_theme_palette"):
     importlib.reload(config)
-from config import get_theme_palette
+from config import get_theme_palette, APP_VERSION
 from data_loader import load_and_clean_data, get_feature_data
 from models import ModelEvaluator
 from views import (
@@ -40,7 +40,7 @@ def main():
     # Sidebar: Clean functional control panel
     with st.sidebar:
         st.markdown("<div style='font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>BẢNG ĐIỀU KHIỂN HỆ THỐNG</div>", unsafe_allow_html=True)
-        st.caption("Forest Fire Analytics Workstation v2.0")
+        st.caption(f"Forest Fire Analytics Workstation v{APP_VERSION}")
         st.markdown("<div style='margin-bottom: 8px;'></div>", unsafe_allow_html=True)
 
         # Theme Switcher
@@ -90,9 +90,31 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-    # Dynamic Theme CSS Injection
+    # Dynamic Theme & Typography CSS Injection
     st.markdown(f"""
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&display=swap');
+
+        /* Base Typography: Lato for all normal/body text */
+        html, body, [class*="css"], .stApp, .stMarkdown, p, span, div, li, a, label, input, select, textarea, button, .stSelectbox, .stSlider, .stRadio, .stMetric, [data-testid="stSidebar"], .stCaption {{
+            font-family: {palette['font_body']} !important;
+        }}
+
+        /* Headings & Titles: SF Pro / Montserrat */
+        h1, h2, h3, h4, h5, h6,
+        .app-title,
+        .section-title,
+        .module-title,
+        .stTabs [data-baseweb="tab"],
+        [data-testid="stMetricLabel"],
+        .title-font {{
+            font-family: {palette['font_title']} !important;
+            letter-spacing: 0.3px;
+        }}
+
         .stApp {{
             background-color: {palette['bg_app']} !important;
             color: {palette['text_primary']} !important;
@@ -127,7 +149,8 @@ def main():
             background-color: transparent;
         }}
         .app-title {{
-            font-size: 18px;
+            font-family: {palette['font_title']} !important;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: 0.5px;
             color: {palette['text_primary']};
@@ -135,9 +158,10 @@ def main():
             margin: 0;
         }}
         .app-subtitle {{
+            font-family: {palette['font_body']} !important;
             font-size: 13px;
             color: {palette['text_secondary']};
-            font-weight: 500;
+            font-weight: 400;
             margin: 3px 0 0 0;
         }}
         .app-telemetry {{
@@ -151,6 +175,19 @@ def main():
             border-radius: 3px;
         }}
 
+        /* Section Titles */
+        .section-title {{
+            font-family: {palette['font_title']} !important;
+            font-size: 13px;
+            font-weight: 700;
+            color: {palette['text_primary']};
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid {palette['border']};
+            padding-bottom: 4px;
+        }}
+
         /* Workstation Tabs */
         .stTabs [data-baseweb="tab-list"] {{
             gap: 4px;
@@ -158,6 +195,7 @@ def main():
             background-color: transparent;
         }}
         .stTabs [data-baseweb="tab"] {{
+            font-family: {palette['font_title']} !important;
             padding: 9px 18px;
             border-radius: 4px 4px 0 0;
             font-size: 13px;
@@ -166,8 +204,10 @@ def main():
             background-color: {palette['bg_surface']};
             border: 1px solid {palette['border']};
             border-bottom: none;
+            letter-spacing: 0.3px;
         }}
         .stTabs [aria-selected="true"] {{
+            font-family: {palette['font_title']} !important;
             color: {palette['text_primary']} !important;
             font-weight: 700 !important;
             background-color: {palette['bg_card']} !important;
@@ -180,9 +220,11 @@ def main():
         div[data-testid="stMarkdownContainer"] span,
         div[data-testid="stMarkdownContainer"] li {{
             color: {palette['text_secondary']};
+            font-family: {palette['font_body']} !important;
         }}
 
         label, .stSlider label, .stSelectbox label, .stRadio label {{
+            font-family: {palette['font_body']} !important;
             color: {palette['text_primary']} !important;
             font-weight: 600 !important;
         }}
@@ -199,7 +241,7 @@ def main():
             <p class="app-subtitle">Trung tâm điều hành hỗ trợ ra quyết định lâm nghiệp tích hợp học máy</p>
         </div>
         <div class="app-telemetry">
-            HỆ THỐNG: SẴN SÀNG | 244 BẢN GHI | DUAL-ENGINE: DT / RF
+            HỆ THỐNG: SẴN SÀNG | PHIÊN BẢN: v{APP_VERSION} | 244 BẢN GHI | DUAL-ENGINE: DT / RF
         </div>
     </div>
     """, unsafe_allow_html=True)

@@ -1,3 +1,5 @@
+APP_VERSION = "1.0.0"
+
 WEATHER_FEATURES = ["Temperature", "RH", "Ws", "Rain"]
 FWI_FEATURES = ["FFMC", "DMC", "DC", "ISI", "BUI", "FWI"]
 ALL_MODEL_FEATURES = WEATHER_FEATURES + FWI_FEATURES
@@ -109,6 +111,10 @@ CLIMATE_PRESETS = {
 }
 
 
+FONT_TITLE = "'SF Pro Display', 'SF Pro Text', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif"
+FONT_BODY = "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+
+
 def get_theme_palette(is_dark: bool = False) -> dict:
     """Returns high-contrast color coordinates for Light or Dark theme mode."""
     if is_dark:
@@ -128,6 +134,8 @@ def get_theme_palette(is_dark: bool = False) -> dict:
             "chart_text": "#f8fafc",
             "tag_bg": "#1e293b",
             "accent_line": "#38bdf8",
+            "font_title": FONT_TITLE,
+            "font_body": FONT_BODY,
         }
     else:
         return {
@@ -146,4 +154,6 @@ def get_theme_palette(is_dark: bool = False) -> dict:
             "chart_text": "#090d16",
             "tag_bg": "#f1f5f9",
             "accent_line": "#090d16",
+            "font_title": FONT_TITLE,
+            "font_body": FONT_BODY,
         }

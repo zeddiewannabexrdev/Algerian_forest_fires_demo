@@ -21,11 +21,13 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model, palette: dict):
     plot_bg = palette["chart_plot"]
     grid_col = palette["chart_grid"]
     is_dark = palette["is_dark"]
+    font_title = palette.get("font_title", "Montserrat, sans-serif")
+    font_body = palette.get("font_body", "Lato, sans-serif")
 
-    st.markdown(f"<h4 style='color:{text_pri}; margin:0;'>MÔ PHỎNG KỊCH BẢN KHÍ HẬU & ĐỘ NHẠY RỦI RO</h4>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='color:{text_pri}; margin:0; font-family:{font_title};'>MÔ PHỎNG KỊCH BẢN KHÍ HẬU & ĐỘ NHẠY RỦI RO</h4>", unsafe_allow_html=True)
     st.caption("Khảo nghiệm phản ứng của mô hình trước các biến thiên khí hậu cực đoan và định vị ranh giới chuyển pha bắt lửa.")
 
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Kịch Bản Giả Lập Mẫu</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Kịch Bản Giả Lập Mẫu</div>", unsafe_allow_html=True)
     preset_key = st.radio(
         "Kịch bản:",
         options=list(CLIMATE_PRESETS.keys()),
@@ -99,20 +101,20 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model, palette: dict):
     with col_res1:
         st.markdown(f"""
         <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 12px 16px; background: {card_bg};">
-            <div style="font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Decision Tree)</div>
+            <div style="font-family: {palette['font_title']}; font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Decision Tree)</div>
             <div style="font-size: 24px; font-family: Consolas, monospace; font-weight: 700; color: {text_pri}; margin-top: 2px;">{prob_dt:.1f}%</div>
         </div>
         """, unsafe_allow_html=True)
     with col_res2:
         st.markdown(f"""
         <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 12px 16px; background: {card_bg};">
-            <div style="font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Random Forest)</div>
+            <div style="font-family: {palette['font_title']}; font-size: 12px; font-weight: 700; color: {text_sec}; text-transform: uppercase;">Xác suất cháy (Random Forest)</div>
             <div style="font-size: 24px; font-family: Consolas, monospace; font-weight: 700; color: {text_pri}; margin-top: 2px;">{prob_rf:.1f}%</div>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Đường Cong Phản Ứng Độ Nhạy Nhiệt Độ (20°C Đến 45°C)</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Đường Cong Phản Ứng Độ Nhạy Nhiệt Độ (20°C Đến 45°C)</div>", unsafe_allow_html=True)
 
     temp_range = np.linspace(20, 45, 40)
     curve_samples = []
@@ -148,20 +150,20 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model, palette: dict):
     fig_curve.add_vline(x=sim_temp, line_dash="solid", line_color=vline_color, line_width=1, annotation_text=f"{sim_temp}°C", annotation_font_size=11, annotation_font_color=text_pri)
 
     fig_curve.update_layout(
-        xaxis=dict(title=dict(text="Nhiệt độ (°C)", font=dict(color=text_pri, size=12)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec)),
-        yaxis=dict(title=dict(text="Xác suất cháy (%)", font=dict(color=text_pri, size=12)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec)),
+        xaxis=dict(title=dict(text="Nhiệt độ (°C)", font=dict(color=text_pri, size=12, family=font_title)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec, family=font_body)),
+        yaxis=dict(title=dict(text="Xác suất cháy (%)", font=dict(color=text_pri, size=12, family=font_title)), gridcolor=grid_col, zeroline=False, tickfont=dict(color=text_sec, family=font_body)),
         height=320,
         paper_bgcolor=paper_bg,
         plot_bgcolor=plot_bg,
-        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
+        font={"family": font_body, "color": text_pri, "size": 12},
         hovermode="x unified",
-        legend=dict(yanchor="top", y=0.96, xanchor="left", x=0.03, bgcolor=card_bg, bordercolor=border_col, borderwidth=1, font=dict(color=text_pri)),
+        legend=dict(yanchor="top", y=0.96, xanchor="left", x=0.03, bgcolor=card_bg, bordercolor=border_col, borderwidth=1, font=dict(color=text_pri, family=font_body)),
         margin=dict(l=30, r=30, t=20, b=30)
     )
     st.plotly_chart(fig_curve, use_container_width=True)
 
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Ma Trận Ranh Giới Chuyển Pha Bắt Lửa (Nhiệt Độ x Độ Ẩm)</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Ma Trận Ranh Giới Chuyển Pha Bắt Lửa (Nhiệt Độ x Độ Ẩm)</div>", unsafe_allow_html=True)
 
     # Vectorized fast 2D grid generation
     grid_t = np.linspace(22, 42, 20)
@@ -233,22 +235,22 @@ def render_climate_view(df: pd.DataFrame, dt_model, rf_model, palette: dict):
         row=1, col=2
     )
 
-    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
-    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
-    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
-    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri), tickfont=dict(color=text_sec))
+    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri, family=palette.get("font_title", "Montserrat, sans-serif")), tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif")))
+    fig_contour.update_xaxes(title_text="Nhiệt độ (°C)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri, family=palette.get("font_title", "Montserrat, sans-serif")), tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif")))
+    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=1, gridcolor=grid_col, title_font=dict(color=text_pri, family=palette.get("font_title", "Montserrat, sans-serif")), tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif")))
+    fig_contour.update_yaxes(title_text="Độ ẩm (%)", row=1, col=2, gridcolor=grid_col, title_font=dict(color=text_pri, family=palette.get("font_title", "Montserrat, sans-serif")), tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif")))
 
     fig_contour.update_layout(
         height=380,
         paper_bgcolor=paper_bg,
         plot_bgcolor=plot_bg,
-        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
+        font={"family": palette.get("font_body", "Lato, sans-serif"), "color": text_pri, "size": 12},
         margin=dict(l=30, r=30, t=40, b=30)
     )
     st.plotly_chart(fig_contour, use_container_width=True)
 
     st.markdown(f"""
-    <div style="border-left: 3px solid {border_col}; padding-left: 12px; font-size: 13px; color: {text_sec}; font-weight: 500; margin-top: 6px;">
+    <div style="border-left: 3px solid {border_col}; padding-left: 12px; font-size: 13px; color: {text_sec}; font-weight: 500; margin-top: 6px; font-family: {palette['font_body']};">
         ĐẶC TÍNH MÔ HÌNH: Decision Tree áp dụng các lát cắt trực giao (axis-aligned orthogonal partitions), dẫn đến bước nhảy tức thời tại các điểm chia nhánh. Random Forest tổng hợp từ nhiều cây con với các tập thuộc tính con khác nhau, tạo bề mặt xác suất mượt mà và phân định ranh giới gần với quy luật tự nhiên.
     </div>
     """, unsafe_allow_html=True)

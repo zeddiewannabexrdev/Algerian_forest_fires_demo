@@ -21,8 +21,10 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
     plot_bg = palette["chart_plot"]
     grid_col = palette["chart_grid"]
     is_dark = palette["is_dark"]
+    font_title = palette.get("font_title", "Montserrat, sans-serif")
+    font_body = palette.get("font_body", "Lato, sans-serif")
 
-    st.markdown(f"<h4 style='color:{text_pri}; margin:0;'>TRUY VẾT RỦI RO THEO MÙA VỤ & DIỄN BIẾN THỜI GIAN</h4>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='color:{text_pri}; margin:0; font-family:{font_title};'>TRUY VẾT RỦI RO THEO MÙA VỤ & DIỄN BIẾN THỜI GIAN</h4>", unsafe_allow_html=True)
     st.caption("Giám sát chuỗi thời gian 4 tháng mùa hè (Tháng 6 - Tháng 9/2012), phân tích cơ chế tích lũy khô hạn và chu kỳ phát hỏa.")
 
     col_region, _ = st.columns([2, 2])
@@ -54,7 +56,7 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
         }).reset_index()
 
     st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Chuỗi Thời Gian Quan Trắc Liên Tục (Timeline)</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Chuỗi Thời Gian Quan Trắc Liên Tục (Timeline)</div>", unsafe_allow_html=True)
 
     fig_time = make_subplots(
         rows=2, cols=1,
@@ -112,19 +114,19 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
         height=440,
         paper_bgcolor=paper_bg,
         plot_bgcolor=plot_bg,
-        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
+        font={"family": palette.get("font_body", "Lato, sans-serif"), "color": text_pri, "size": 12},
         margin=dict(l=30, r=30, t=30, b=30),
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color=text_pri)),
-        xaxis=dict(gridcolor=grid_col, tickfont=dict(color=text_sec)),
-        yaxis=dict(gridcolor=grid_col, tickfont=dict(color=text_sec)),
-        xaxis2=dict(gridcolor=grid_col, tickfont=dict(color=text_sec)),
-        yaxis2=dict(gridcolor=grid_col, tickfont=dict(color=text_sec))
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color=text_pri, family=palette.get("font_body", "Lato, sans-serif"))),
+        xaxis=dict(gridcolor=grid_col, tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif"))),
+        yaxis=dict(gridcolor=grid_col, tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif"))),
+        xaxis2=dict(gridcolor=grid_col, tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif"))),
+        yaxis2=dict(gridcolor=grid_col, tickfont=dict(color=text_sec, family=palette.get("font_body", "Lato, sans-serif")))
     )
     st.plotly_chart(fig_time, use_container_width=True)
 
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Hiện Tượng Tích Lũy Khô Hạn Tầng Sâu (Drought Code)</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Hiện Tượng Tích Lũy Khô Hạn Tầng Sâu (Drought Code)</div>", unsafe_allow_html=True)
 
     col_dc1, col_dc2 = st.columns([1.6, 1])
 
@@ -145,18 +147,18 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
             height=300,
             paper_bgcolor=paper_bg,
             plot_bgcolor=plot_bg,
-            font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 11},
-            xaxis=dict(gridcolor=grid_col, title=dict(font=dict(color=text_pri)), tickfont=dict(color=text_sec)),
-            yaxis=dict(gridcolor=grid_col, title=dict(font=dict(color=text_pri)), tickfont=dict(color=text_sec)),
-            legend=dict(font=dict(color=text_pri)),
+            font={"family": font_body, "color": text_pri, "size": 11},
+            xaxis=dict(gridcolor=grid_col, title=dict(font=dict(color=text_pri, family=font_title)), tickfont=dict(color=text_sec, family=font_body)),
+            yaxis=dict(gridcolor=grid_col, title=dict(font=dict(color=text_pri, family=font_title)), tickfont=dict(color=text_sec, family=font_body)),
+            legend=dict(font=dict(color=text_pri, family=font_body)),
             margin=dict(l=20, r=20, t=20, b=20)
         )
         st.plotly_chart(fig_dc, use_container_width=True)
 
     with col_dc2:
         st.markdown(f"""
-        <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 16px; background-color: {card_bg}; height: 100%;">
-            <div style="font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px;">Cơ chế tích lũy Tháng 8</div>
+        <div style="border: 1px solid {border_col}; border-radius: 4px; padding: 16px; background-color: {card_bg}; height: 100%; font-family: {font_body};">
+            <div style="font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px;">Cơ chế tích lũy Tháng 8</div>
             <div style="font-size: 13px; color: {text_sec}; line-height: 1.7; font-weight: 500;">
                 Chỉ số DC phản ánh lượng ẩm tầng hữu cơ sâu và rễ cây mục. Trái với tầng bề mặt (FFMC) vốn có thể hấp thụ ẩm trở lại sau một trận mưa rào nhỏ, tầng sâu cần nhiều tuần bốc hơi liên tục. Sang tháng 8, chỉ số DC đạt ngưỡng cực đại (>150), khiến các đám cháy nếu phát sinh sẽ ăn sâu xuống tầng rễ và duy trì nhiệt lượng rất lớn.
             </div>
@@ -164,7 +166,7 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
         """, unsafe_allow_html=True)
 
     st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Ma Trận Lịch Rủi Ro Từng Ngày (Calendar Matrix)</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-family: {font_title}; font-size: 13px; font-weight: 700; color: {text_pri}; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid {border_col}; padding-bottom: 4px;'>Ma Trận Lịch Rủi Ro Từng Ngày (Calendar Matrix)</div>", unsafe_allow_html=True)
 
     pivot_risk = df.pivot_table(
         index="Month_Name",
@@ -198,16 +200,16 @@ def render_seasonal_view(df: pd.DataFrame, palette: dict):
         height=240,
         paper_bgcolor=paper_bg,
         plot_bgcolor=plot_bg,
-        font={"family": "Segoe UI, Arial, sans-serif", "color": text_pri, "size": 12},
-        xaxis=dict(tickfont=dict(color=text_pri)),
-        yaxis=dict(tickfont=dict(color=text_pri)),
-        coloraxis_colorbar=dict(tickfont=dict(color=text_pri), title=dict(font=dict(color=text_pri))),
+        font={"family": palette.get("font_body", "Lato, sans-serif"), "color": text_pri, "size": 12},
+        xaxis=dict(tickfont=dict(color=text_pri, family=palette.get("font_body", "Lato, sans-serif"))),
+        yaxis=dict(tickfont=dict(color=text_pri, family=palette.get("font_body", "Lato, sans-serif"))),
+        coloraxis_colorbar=dict(tickfont=dict(color=text_pri, family=palette.get("font_body", "Lato, sans-serif")), title=dict(font=dict(color=text_pri, family=palette.get("font_title", "Montserrat, sans-serif")))),
         margin=dict(l=30, r=30, t=20, b=30)
     )
     st.plotly_chart(fig_heat, use_container_width=True)
 
     st.markdown(f"""
-    <div style="border-left: 3px solid {border_col}; padding-left: 12px; font-size: 13px; color: {text_sec}; font-weight: 500; margin-top: 6px;">
+    <div style="border-left: 3px solid {border_col}; padding-left: 12px; font-size: 13px; color: {text_sec}; font-weight: 500; margin-top: 6px; font-family: {palette['font_body']};">
         QUY LUẬT MÙA VỤ: Tháng 6 đóng vai trò giai đoạn chuyển tiếp, độ ẩm tầng sâu còn duy trì. Tháng 7 và 8 là cao điểm cháy diện rộng đồng bộ trên cả hai khu vực. Bước sang cuối tháng 9, lượng mưa xuất hiện giúp hạ nhiệt độ và giải tỏa trạng thái khô hạn.
     </div>
     """, unsafe_allow_html=True)

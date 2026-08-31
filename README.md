@@ -1,4 +1,4 @@
-# Algerian Forest Fire Analytics & Early Warning Workstation
+# Algerian Forest Fire Analytics & Early Warning Workstation `v1.0.0`
 
 An end-to-end decision-support and climate-simulation workstation for wildfire risk prediction, built on the Algerian Forest Fires Dataset (2012). The system incorporates dual machine-learning engines: **Decision Tree** and **Random Forest**, balancing intuitive decision explainability with robust predictive accuracy.
 
@@ -85,14 +85,34 @@ For Windows systems with Python installed, utilize the pre-configured automated 
 
 2. **Step 2: Start the application**
    Double-click `run_app.bat` or execute in Terminal:
-   ```cmd
-   run_app.bat
-   ```
    Your default web browser will open automatically at: `http://localhost:8501`.
+
+3. **Step 3: Run as a Standalone Desktop Application (No browser tabs)**
+   Run `desktop_app.py` directly:
+   ```cmd
+   python desktop_app.py
+   ```
+   This launches the software inside a clean, dedicated desktop application window without browser URL bars or navigation buttons.
 
 ---
 
-### Method 2: Manual Installation (Cross-Platform)
+### Method 2: Building Standalone Windows Executable (.exe)
+
+To bundle the entire project into a standalone `.exe` desktop application for distribution:
+
+1. Double-click `build_exe.bat` or execute in Terminal:
+   ```cmd
+   build_exe.bat
+   ```
+2. Upon build completion, the executable package will be generated at:
+   ```text
+   dist/ForestFireWorkstation/ForestFireWorkstation.exe
+   ```
+   You can distribute this folder to any Windows 10/11 machine.
+
+---
+
+### Method 3: Manual Installation (Cross-Platform)
 
 1. **Clone the repository:**
    ```bash
