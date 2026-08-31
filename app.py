@@ -1,7 +1,6 @@
 import importlib
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 import config
 if not hasattr(config, "get_theme_palette"):

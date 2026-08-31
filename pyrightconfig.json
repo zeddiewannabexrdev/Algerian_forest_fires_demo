@@ -1,0 +1,15 @@
+{
+    "include": [
+        "."
+    ],
+    "extraPaths": [
+        ".",
+        "models",
+        "views"
+    ],
+    "reportMissingImports": "none",
+    "reportMissingModuleSource": "none",
+    "reportGeneralTypeIssues": "none",
+    "reportOptionalMemberAccess": "none",
+    "typeCheckingMode": "off"
+}
