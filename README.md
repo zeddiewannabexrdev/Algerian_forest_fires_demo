@@ -72,47 +72,7 @@ TTCS/
 
 ## 4. Installation and Execution
 
-### Method 1: Fast Launch on Windows (Recommended)
-
-For Windows systems with Python installed, utilize the pre-configured automated batch scripts:
-
-1. **Step 1: Create virtual environment and install packages**
-   Double-click `setup_env.bat` or execute in Terminal:
-   ```cmd
-   setup_env.bat
-   ```
-   This script automatically initializes a `.venv` virtual environment and installs all dependencies from `requirements.txt`.
-
-2. **Step 2: Start the application**
-   Double-click `run_app.bat` or execute in Terminal:
-   Your default web browser will open automatically at: `http://localhost:8501`.
-
-3. **Step 3: Run as a Standalone Desktop Application (No browser tabs)**
-   Run `desktop_app.py` directly:
-   ```cmd
-   python desktop_app.py
-   ```
-   This launches the software inside a clean, dedicated desktop application window without browser URL bars or navigation buttons.
-
----
-
-### Method 2: Building Standalone Windows Executable (.exe)
-
-To bundle the entire project into a standalone `.exe` desktop application for distribution:
-
-1. Double-click `build_exe.bat` or execute in Terminal:
-   ```cmd
-   build_exe.bat
-   ```
-2. Upon build completion, the executable package will be generated at:
-   ```text
-   dist/ForestFireWorkstation/ForestFireWorkstation.exe
-   ```
-   You can distribute this folder to any Windows 10/11 machine.
-
----
-
-### Method 3: Manual Installation (Cross-Platform)
+### Method 1: Running from Source (Standard Cross-Platform)
 
 1. **Clone the repository:**
    ```bash
@@ -132,7 +92,7 @@ To bundle the entire project into a standalone `.exe` desktop application for di
      source .venv/bin/activate
      ```
 
-3. **Upgrade pip and install dependencies:**
+3. **Install dependencies:**
    ```bash
    python -m pip install --upgrade pip
    pip install -r requirements.txt
@@ -142,11 +102,23 @@ To bundle the entire project into a standalone `.exe` desktop application for di
    ```bash
    streamlit run app.py
    ```
-   Access the dashboard at the displayed local URL:
-   ```text
-   Local URL: http://localhost:8501
-   Network URL: http://192.168.x.x:8501
+   Access the workstation dashboard at: `http://localhost:8501`.
+
+5. **Optional - Run as a Dedicated Desktop Window:**
+   To run without browser navigation bars:
+   ```bash
+   python desktop_app.py
    ```
+
+---
+
+### Method 2: Pre-compiled Windows Standalone Executable (No Python Required)
+
+For end-users on Windows 10/11 who do not have a Python development environment:
+
+1. Navigate to the **[GitHub Releases](https://github.com/zeddiewannabexrdev/Algerian_forest_fires_demo/releases)** section.
+2. Download `ForestFireWorkstation-v1.0.0-windows-x64.zip`.
+3. Extract the `.zip` archive and run `ForestFireWorkstation.exe`.
 
 ---
 

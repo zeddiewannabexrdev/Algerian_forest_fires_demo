@@ -45,10 +45,20 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyInstaller temporary files (keep project spec file)
+# Executable binaries & compiled applications
+*.exe
+*.dll
+*.so
+*.dylib
+
+# PyInstaller temporary & build specification files
 *.manifest
-# Exempt customized project build spec
-!ForestFireWorkstation.spec
+*.spec
+
+# Local runner scripts and OS batch files
+*.bat
+*.cmd
+*.ps1
 
 # Release packages and large binary archives
 *.zip
