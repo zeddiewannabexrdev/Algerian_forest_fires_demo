@@ -43,9 +43,6 @@ TTCS/
 |   |-- regional_view.py                          # Module 3: Comparative regional analytics & FWI radar
 |   |-- seasonal_view.py                          # Module 4: Seasonal risk tracking & DC drought buildup
 |   `-- explainability_view.py                    # Module 5: Gini feature importances & tree rule inspector
-|-- docs/
-|   |-- Tai_Lieu_Thiet_Ke_Va_Huong_Dan_He_Thong.docx # Comprehensive Word engineering documentation
-|   `-- generate_docs.py                          # Automated docx document generator script
 |-- .streamlit/
 |   `-- config.toml                               # Streamlit server & runtime configuration
 |-- .vscode/
